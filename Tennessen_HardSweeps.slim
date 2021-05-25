@@ -12,8 +12,8 @@ initialize() {
 		defineConstant("verbosity", 1);
 	
 	if (exists("slimgui")) {
-		defineConstant("burn_in", 10.0);
-		defineConstant("selec", 0.05);
+		defineConstant("burn_in", 1.0);
+		defineConstant("selec", 0.01);
 		defineConstant("introduceMut", 2000);
 		defineConstant("mutation_rate", 1.25e-08);
 		defineConstant("recomb_rate",5e-09);
@@ -23,7 +23,6 @@ initialize() {
 	}
 	//define constants for simulation
 	defineConstant("simID", getSeed());
-	defineConstant("Q", 1); // Scaling factor to speed up simulation.
 	defineConstant("generation_time", 25);
 	defineConstant("pop_names", c("AFR", "EUR"));
 	
@@ -88,14 +87,13 @@ initialize() {
 	// Admixture pulses, one row for each pulse.
 	defineConstant("admixture_pulses", c());
 	
-	defineConstant("N", asInteger(_N/Q));
+	defineConstant("N", asInteger(_N));
 	initializeMutationRate(mutation_rate);
 	initializeMutationType("m1", 0.5, "f", 0);
 	initializeMutationType("m2", 0.5, "f", selec);  // beneficial mutation
-	//m2.convertToSubstitution = F;
 	initializeGenomicElementType("g1", m1, 1.0);
 	initializeGenomicElement(g1, 0, chromosome_length-1);
-	initializeRecombinationRate(recomb_rate);//
+	initializeRecombinationRate(recomb_rate);
 
 }
 function (void)err(string$ s) {
@@ -137,7 +135,7 @@ function (integer)epoch(integer G, integer $g) {
 function (integer)pop_size_at(integer G, integer$ pop, integer$ g) {
 	e = epoch(G, g);
 	N0 = N[e,pop];
-	r = Q * growth_rates[e,pop];
+	r =  growth_rates[e,pop];
 	if (r == 0) {
 		N_g = N0;
 	} else {
@@ -149,7 +147,7 @@ function (integer)pop_size_at(integer G, integer$ pop, integer$ g) {
 
 // Return the number of generations that separate t0 and t1.
 function (integer)gdiff(numeric$ t0, numeric t1) {
-	return asInteger(round((t0-t1)/generation_time/Q));
+	return asInteger(round((t0-t1)/generation_time));
 }
 // Add mutation half way through the chromosome
 function (void)addMut(void) {
@@ -222,7 +220,7 @@ function (void)outMesolithic(void) {
 				next;
 			}
 			
-			m = Q * migration_matrices[k,j,i];
+			m = migration_matrices[k,j,i];
 			p = sim.subpopulations[j];
 			dbg("p"+j+".setMigrationRates("+k+", "+m+");");
 			p.setMigrationRates(k, m);
@@ -247,7 +245,7 @@ function (void)outMesolithic(void) {
 		for (i in 0:(ncol(subpopulation_splits)-1)) {
 			g = G_start + gdiff(T_start, subpopulation_splits[0,i]);
 			newpop = drop(subpopulation_splits[1,i]);
-			size = asInteger(subpopulation_splits[2,i] / Q);
+			size = asInteger(subpopulation_splits[2,i]);
 			oldpop = subpopulation_splits[3,i];
 			check_size(newpop, size, g);
 			sim.registerLateEvent(NULL,
@@ -291,7 +289,7 @@ function (void)outMesolithic(void) {
 					check_size(j, N_growth_phase_end, growth_phase_end);
 					
 					N0 = N[i,j];
-					r = Q * growth_rates[i,j];
+					r = growth_rates[i,j];
 					sim.registerLateEvent(NULL,
 						"{" +
 						"dbg(self.source); " +
@@ -312,8 +310,8 @@ function (void)outMesolithic(void) {
 						next;
 					}
 					
-					m_last = Q * migration_matrices[k,j,i-1];
-					m = Q * migration_matrices[k,j,i];
+					m_last =migration_matrices[k,j,i-1];
+					m = migration_matrices[k,j,i];
 					if (m == m_last) {
 						// Do nothing if the migration rate hasn't changed.
 						next;
@@ -348,23 +346,20 @@ function (void)outMesolithic(void) {
 	
 	// Add selection
 	genSelec = asInteger(G_end-introduceMut);
-	sim.registerLateEvent(NULL, "{dbg(self.source); addMut();}", genSelec, genSelec);
+	sim.registerLateEvent(NULL, "{addMut();}", genSelec, genSelec);
 	
 	//check for loss/fixation of selection 
 	sim.registerLateEvent(NULL, "{checkMut();}", genSelec, G_end);
 	
 	// output VCF at gen G_end-400 (Mesolithic Samples)
-	sim.registerLateEvent(NULL, "{dbg(self.source); outMesolithic();}", G_end-400, G_end-400);
+	sim.registerLateEvent(NULL, "{outMesolithic();}", G_end-400, G_end-400);
 	
 	// output VCF at gen G_end-40 (Modern Samples)
-	sim.registerLateEvent(NULL, "{dbg(self.source); outModern();}", G_end-40, G_end-40);
+	sim.registerLateEvent(NULL, "{outModern();}", G_end-40, G_end-40);
 	
 	//output end of simulation
-	//sim.registerLateEvent(NULL, "{dbg(self.source); end();}", G_end, G_end);
-	
-	if (G_start > sim.generation) {
-		dbg("Starting burn-in...");
-	}
+	//sim.registerLateEvent(NULL, "{end();}", G_end, G_end);
+
 
 }
 
