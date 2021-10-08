@@ -12,9 +12,10 @@ initialize() {
 		defineConstant("verbosity", 1);
 	
 	if (exists("slimgui")) {
-		defineConstant("burn_in", 10.0);
+		defineConstant("burn_in", 1.0);
 		defineConstant("selec", 0.1);
 		defineConstant("introduceMut", 500);
+		defineConstant("sampleSize", 177);
 	}
 	//define constants for simulation
 	defineConstant("simID", getSeed());
@@ -22,9 +23,11 @@ initialize() {
 	defineConstant("generation_time", 28);
 	defineConstant("mutation_rate", Q * 1.25e-08);
 	defineConstant("recomb_rate",5e-09);
-	defineConstant("chromosome_length", 2e5);
+	defineConstant("chromosome_length",5e5);
 	defineConstant("file_modern", "tmp/VCF_modern.csv");
 	defineConstant("file_mesolithic", "tmp/VCF_mesolithic.csv");
+	defineConstant("file_250", "tmp/VCF_250.csv");
+	defineConstant("file_100", "tmp/VCF_100.csv");
 	defineConstant("pop_names", c("AFR", "EUR"));
 	
 	// Time of epoch boundaries, in years before present.
@@ -178,18 +181,22 @@ function (void)checkMut(void) {
 
 
 function (void)end(void) {
-	p1.outputVCFSample(177,filePath=file_modern);
+	p1.outputVCFSample(187,filePath=file_modern);
 	sim.simulationFinished();
 }
 
 // Output VCF file (modern sample) and end simulation.
-function (void)outModern(void) {
-	p1.outputVCFSample(177,filePath=file_modern);
+function (void)outModern(integer  size) {
+	p1.outputVCFSample(size,filePath=file_modern);
 	sim.simulationFinished();
 }
 
-function (void)outMesolithic(void) {
-	p1.outputVCFSample(177,filePath=file_mesolithic);
+function (void)outMesolithic(integer size) {
+	p1.outputVCFSample(size,filePath=file_mesolithic);
+}
+
+function (void)outputSample(integer size,string$ path) {
+	p1.outputVCFSample(size,filePath=path);
 }
 
 
@@ -351,10 +358,16 @@ function (void)outMesolithic(void) {
 	sim.registerLateEvent(NULL, "{checkMut();}", genSelec, G_end);
 	
 	// output VCF at gen G_end-400 (Mesolithic Samples)
-	sim.registerLateEvent(NULL, "{dbg(self.source); outMesolithic();}", G_end-400, G_end-400);
+	sim.registerLateEvent(NULL, "{dbg(self.source); outputSample(sampleSize,file_mesolithic);}", G_end-400, G_end-400);
+	
+	// output VCF at gen G_end-250
+	sim.registerLateEvent(NULL, "{dbg(self.source); outputSample(sampleSize,file_250);}", G_end-250, G_end-250);
+	
+	// output VCF at gen G_end-100 
+	sim.registerLateEvent(NULL, "{dbg(self.source); outputSample(sampleSize,file_100);}", G_end-100, G_end-100);
 	
 	// output VCF at gen G_end-40 (Modern Samples)
-	sim.registerLateEvent(NULL, "{dbg(self.source); outModern();}", G_end-40, G_end-40);
+	sim.registerLateEvent(NULL, "{dbg(self.source); outModern(sampleSize);}", G_end-40, G_end-40);
 	
 	//output end of simulation
 	//sim.registerLateEvent(NULL, "{dbg(self.source); end();}", G_end, G_end);

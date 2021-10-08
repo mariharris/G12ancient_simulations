@@ -7,7 +7,7 @@ conda activate slim
 for trial in {1..100};do
 	for K in 5 10 25 50;do
       #run slim simulation
-        slim -d burn_in=11.0 -d selec=0.1 -d K=${K} -d introduceMut=1000 -d sampleSize=177 Tennesen_selec_SoftSweeps.slim
+        slim -d burn_in=11.0 -d selec=0.1 -d K=${K} -d introduceMut=1000 -d sampleSize=177 Tennessen_SoftSweeps.slim
 
 	#run python file
 	python Tennesen_selec.py -m 0.548
