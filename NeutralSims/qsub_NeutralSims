@@ -1,0 +1,45 @@
+#!/bin/bash
+
+#$ -cwd
+# error = Merged with joblog
+#$ -o joblog.$JOB_ID.$TASK_ID
+#$ -j y
+## Edit the line below as needed:
+#$ -l h_rt=80:00:00,h_data=11G,highp
+## Modify the parallel environment
+## and the number of cores as needed:
+#$ -pe shared 1
+# Notify when
+#$ -m a
+#  Job array indexes
+#$ -t 1-100:1
+
+
+# load the job environment:
+. /u/local/Modules/default/init/modules.sh
+module load anaconda3
+module load python/3.7.3
+
+#activate slim environment
+source /u/local/apps/anaconda3/2020.11/etc/profile.d/conda.sh
+conda activate slim
+
+# echo job info on joblog:
+echo "Job $JOB_ID started on:   " `hostname -s`
+echo "Job $JOB_ID started on:   " `date `
+echo " "
+
+is=(null ${is[@]}) # this pads the file with an extra line in the beginning.
+i=${is[$SGE_TASK_ID]}
+echo $i
+
+id=$SGE_TASK_ID
+
+echo $id
+
+bash run_Neutral.sh ${id}
+
+# echo job info on joblog:
+echo "Job $JOB_ID ended on:   " `hostname -s`
+echo "Job $JOB_ID ended on:   " `date `
+echo " "
