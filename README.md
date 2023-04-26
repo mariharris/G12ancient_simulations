@@ -1,7 +1,7 @@
 # Ancient_DNA_simulations
 
 Simulations for manuscript: Pandey D, Harris M, Garud N and Narasimhan V.
-  **Understanding Natural Selection in the European Holocene using Ancient DNA** 
+  **Understanding Natural Selection in the European Holocene using Ancient DNA**  (https://www.biorxiv.org/content/10.1101/2023.04.24.538113v1)
   
  
 We include files used to run hard and soft sweep simulations as well as the code used to compute the false discovery rate values computed from neutral simulations ("Neutral" folder).
