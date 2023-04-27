@@ -23,7 +23,7 @@ We varied the time of the onset of selection, generation of sample and the selec
 
 Based on missingness observed in the data we added missing data to our simulated datasets with a mean rate of 0.55 missingness per SNP and standard deviation of 0.23. We next pseudo haploidized the data using a pseudo haploidization scheme in which we randomly selected one of the two alleles in the case of heterozygous genotypes. Based on previous haplotype-based statistics (Garud et al. 2015; Harris et al. 2018), we define the multilocus-genotype based statistic for aDNA data as:
 
-$$G12_{anciet}= (p_1 + p_2)^2 + \sum_{i>2}p_i^2,$$
+$$G12_{ancient}= (p_1 + p_2)^2 + \sum_{i>2}p_i^2,$$
 
 where $p_i$ is the frequency of the _i_-th most common pseudo-haplotype in a sample.
 
