@@ -1,0 +1,61 @@
+#### submit_Admixture job####
+#!/bin/bash                         #-- what is the language of this shell
+
+#$ -cwd
+# error = Merged with joblog
+#$ -o joblog.$JOB_ID.$TASK_ID
+#$ -j y
+## Edit the line below as needed:
+#$ -l h_rt=200:00:00,h_data=13G,highp
+## Modify the parallel environment
+## and the number of cores as needed:
+#$ -pe shared 1
+# Notify when
+##$ -m e
+#  Job array indexes
+#$ -t 1-10:1
+
+# echo job info on joblog:
+echo "Job $JOB_ID started on:   " `hostname -s`
+echo "Job $JOB_ID started on:   " `date `
+echo " "
+
+
+# load the job environment:
+. /u/local/Modules/default/init/modules.sh
+module load anaconda3
+module load python/3.7.3
+
+#activate slim environment
+source /u/local/apps/anaconda3/2020.11/etc/profile.d/conda.sh
+conda activate slim
+
+is=(null ${is[@]}) # this pads the file with an extra line in the beginning. 
+i=${is[$SGE_TASK_ID]}
+echo $i
+
+
+id=$SGE_TASK_ID 
+
+slim -v
+
+sampleSize=177
+PF=1
+recomb_rate=5e-9
+
+for introduceMut in 280 500 1000; do
+for AgeSweep in 40 100 250; do
+for s in 0.01 0.0075; do #0.001 0.005 0.1 0.025 0.05
+	file=tmp_intermediate_files/HardSweep_tmp_${id}.txt
+	echo ${file}
+	bash run_HardSweep.sh ${file} $sampleSize $id $introduceMut $PF  $recomb_rate $AgeSweep $s
+done
+done
+done
+
+
+# echo job info on joblog:
+echo "Job $JOB_ID ended on:   " `hostname -s`
+echo "Job $JOB_ID ended on:   " `date `
+echo " "
+
