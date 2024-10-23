@@ -4,19 +4,19 @@ This repository contains scripts designed to run G12 scans on modern data from t
 
 ## Repository Structure
 
-### 1. [**Processing/**](Processing/)
+### 1. [**Processing/**](G12ancient_simulations/Modern_Data/Processing/)
 This directory contains scripts for processing the raw modern data and converting it to the default G12 format. The processing includes handling pseudo-haplotypes and ensuring compatibility with G12 scans.
 
-### 2. [**Running_G12/**](Running_G12/)
+### 2. [**Running_G12/**](G12ancient_simulations/Modern_Data/Running_G12/)
 In this directory, you will find scripts that run G12 scans on the processed modern data. These scripts are designed to simulate conditions typical for ancient DNA (aDNA) data analysis.
 
 ## How to Use
 
 1. **Data Processing:**
-   - Navigate to the [**Processing/**](Processing/) directory and execute the provided scripts to transform your modern data into the required G12 format.
+   - Navigate to the [**Processing/**](G12ancient_simulations/Modern_Data/Processing/) directory and execute the provided scripts to transform your modern data into the required G12 format.
 
 2. **Running G12:**
-   - Once your data is in the correct format, move to the [**Running_G12/**](Running_G12/) directory to run the G12 scan on the processed data.
+   - Once your data is in the correct format, move to the [**Running_G12/**](G12ancient_simulations/Modern_Data/Running_G12/) directory to run the G12 scan on the processed data.
 
 ## Prerequisites
 
